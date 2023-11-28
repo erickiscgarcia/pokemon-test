@@ -10,7 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 public class PokemonServiceResponse {
-    private int id;
+    private long id;
     private String name;
     private List<MoveServiceResponse> moves;
     private List<TypeServiceResponse> types;
