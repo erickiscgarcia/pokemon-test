@@ -97,6 +97,22 @@ public class PokemonController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @ApiOperation(value = "Delete a pokemon by its type")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Pokemon deleted successfully"),
+            @ApiResponse(code = 404, message = "Pokemon not found"),
+            @ApiResponse(code = 400, message = "Invalid data")})
+    @DeleteMapping("/by-type")
+    public ResponseEntity<?> deleteByType(final @NotNull @RequestParam("type") String pokemonType) {
+        logger.info("Delete a pokemon by its type");
+        try {
+            pokemonBusiness.deletePokemonByType(pokemonType);
+        } catch (InvalidDataException e) {
+            return handleInvalidDataException(e);
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @ExceptionHandler(ApiFetchDataException.class)
     public ResponseEntity<String> handleApiFetchDataException(ApiFetchDataException ex) {
         String errorMessage = "Error fetching data from API.";

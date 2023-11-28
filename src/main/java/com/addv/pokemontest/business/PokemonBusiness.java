@@ -92,4 +92,21 @@ public class PokemonBusiness {
         Pokemon pokemon = pokemonService.findByName(name);
         pokemonService.delete(pokemon);
     }
+
+    /**
+     * Method to eliminate the pokemon by it's type.
+     *
+     * @param type The pokemon type.
+     *
+     * @throws InvalidDataException If the pokemon list is empty.
+     */
+    public void deletePokemonByType(String type) throws InvalidDataException {
+        List<Pokemon> pokemonToDelete = pokemonService.findByType(type);
+        if (pokemonToDelete.isEmpty()){
+            throw new InvalidDataException("The pokemon type provided is not related to any pokemon.");
+        }
+        for(Pokemon pokemon : pokemonToDelete) {
+                pokemonService.delete(pokemon);
+        }
+    }
 }

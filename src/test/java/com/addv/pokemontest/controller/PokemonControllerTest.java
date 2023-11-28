@@ -6,6 +6,7 @@ import com.addv.pokemontest.vo.PokemonVo;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -159,6 +160,30 @@ class PokemonControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals(exception.getMessage(), response.getBody());
         verify(pokemonBusiness, times(1)).deletePokemonByName(pokemonName);
+    }
+
+    @Test
+    public void deleteByType_SuccessfullyDeleted_ReturnsNoContent() throws InvalidDataException {
+        String pokemonType = "fire";
+        Mockito.doNothing().when(pokemonBusiness).deletePokemonByType(pokemonType);
+
+        ResponseEntity<?> response = pokemonController.deleteByType(pokemonType);
+
+        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+        verify(pokemonBusiness, times(1)).deletePokemonByType(pokemonType);
+    }
+
+    @Test
+    public void deleteByType_InvalidData_ReturnsBadRequest() throws InvalidDataException {
+        String pokemonType = null;
+        InvalidDataException exception = new InvalidDataException("The provided information is incorrect.");
+        Mockito.doThrow(exception).when(pokemonBusiness).deletePokemonByType(null);
+
+        ResponseEntity<?> response = pokemonController.deleteByType(null);
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals(exception.getMessage(), response.getBody());
+        verify(pokemonBusiness, times(1)).deletePokemonByType(pokemonType);
     }
 
 }

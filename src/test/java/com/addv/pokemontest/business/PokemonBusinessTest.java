@@ -10,14 +10,19 @@ import com.addv.pokemontest.exception.PokemonNotFoundException;
 import com.addv.pokemontest.mapper.PokemonApiMapper;
 import com.addv.pokemontest.mapper.PokemonMapper;
 import com.addv.pokemontest.model.Pokemon;
+import com.addv.pokemontest.model.Type;
 import com.addv.pokemontest.service.PokemonService;
 import com.addv.pokemontest.vo.PokemonVo;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -184,5 +189,32 @@ class PokemonBusinessTest {
 
         verify(pokemonService, times(1)).findByName(name);
         verify(pokemonService, times(1)).delete(pokemon);
+    }
+
+    @Test
+    void testDeletePokemonByType() throws Exception {
+        Type type = new Type();
+        type.setName("fire");
+        type.setSlot(1);
+        type.setUrl("url/fake");
+        List<Type> typeList = new ArrayList<>();
+        typeList.add(type);
+        Pokemon pokemon1 = new Pokemon(1L,"Charmander", Collections.emptyList(), typeList);
+        Pokemon pokemon2 = new Pokemon(2L , "Charizard", Collections.emptyList(), typeList);
+        List<Pokemon> pokemonList = Arrays.asList(pokemon1, pokemon2);
+        when(pokemonService.findByType("fire")).thenReturn(pokemonList);
+
+        pokemonBusiness.deletePokemonByType("fire");
+
+        verify(pokemonService, times(2)).delete(any(Pokemon.class));
+    }
+
+    @Test
+    void testDeletePokemonByTypeThrowsInvalidDataException() {
+        String type = "Water";
+
+        when(pokemonService.findByType(type)).thenReturn(Collections.emptyList());
+
+        assertThrows(InvalidDataException.class, () -> pokemonBusiness.deletePokemonByType(type));
     }
 }
