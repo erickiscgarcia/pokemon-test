@@ -61,7 +61,7 @@ class PokemonControllerTest {
         ResponseEntity<?> response = pokemonController.createPokemon(pokemonName);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-        assertEquals("Error al obtener los datos de la API", response.getBody());
+        assertEquals("Error fetching data from API.", response.getBody());
     }
 
 
@@ -73,7 +73,7 @@ class PokemonControllerTest {
         ResponseEntity<?> response = pokemonController.createPokemon(pokemonName);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("No se encontró el endpoint en la API para obtener el pokemon proporcionado.", response.getBody());
+        assertEquals("Endpoint for retrieving the provided pokemon was not found in the API.", response.getBody());
     }
 
     @Test
@@ -84,7 +84,7 @@ class PokemonControllerTest {
         ResponseEntity<?> response = pokemonController.createPokemon(pokemonName);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-        assertEquals("La información proporcionada es incorrecta", response.getBody());
+        assertEquals("The provided information is incorrect.", response.getBody());
     }
 
     @Test
@@ -114,7 +114,7 @@ class PokemonControllerTest {
     @Test
     public void testDeleteInvalidDataException() throws Exception {
         long pokemonId = -1L;
-        InvalidDataException exception = new InvalidDataException("La información proporcionada es incorrecta");
+        InvalidDataException exception = new InvalidDataException("The provided information is incorrect.");
         doThrow(exception).when(pokemonBusiness).deletePokemon(pokemonId);
 
         ResponseEntity<?> response = pokemonController.delete(pokemonId);
@@ -151,7 +151,7 @@ class PokemonControllerTest {
     @Test
     public void testDeleteByNameInvalidDataException() throws Exception {
         String pokemonName = "pikachu";
-        InvalidDataException exception = new InvalidDataException("La información proporcionada es incorrecta");
+        InvalidDataException exception = new InvalidDataException("The provided information is incorrect.");
         doThrow(exception).when(pokemonBusiness).deletePokemonByName(pokemonName);
 
         ResponseEntity<?> response = pokemonController.deleteByName(pokemonName);
