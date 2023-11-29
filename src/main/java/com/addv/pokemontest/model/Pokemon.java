@@ -18,10 +18,10 @@ public class Pokemon {
     private long id;
     @Column(name = "name")
     private String name;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "pokemon_id")
     private List<Move> moves;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "pokemon_id")
     private List<Type> types;
 }
