@@ -91,6 +91,17 @@ public class PokemonService {
         this.pokemonRepository.delete(pokemon);
     }
 
+
+    /**
+     * Find all the pokemon by it's type.
+     *
+     * @param type The provider type.
+     * @return A list of pokemon object related to the type provided
+     */
+    public List<Pokemon> findByType(String type) {
+            return this.pokemonRepository.findByTypes_Name(type);
+    }
+
 }
 
 
