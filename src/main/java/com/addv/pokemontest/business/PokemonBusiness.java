@@ -49,7 +49,7 @@ public class PokemonBusiness {
         PokemonServiceResponse response = pokeApiClient.getPokemonByName(name);
         Pokemon pokemon = pokemonApiMapper.mapPokemon(response);
 
-        Pokemon pokemonAlreadyExist = null;
+        Pokemon pokemonAlreadyExist;
         try {
             pokemonAlreadyExist = pokemonService.findById(pokemon.getId());
             return pokemonMapper.entityToVo(pokemonAlreadyExist);

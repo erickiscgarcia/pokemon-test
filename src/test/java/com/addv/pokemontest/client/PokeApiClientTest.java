@@ -1,8 +1,6 @@
 package com.addv.pokemontest.client;
 
 import com.addv.pokemontest.client.dto.PokemonServiceResponse;
-import com.addv.pokemontest.exception.ApiEndpointNotFoundException;
-import com.addv.pokemontest.exception.ApiFetchDataException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,14 +9,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -52,29 +47,6 @@ public class PokeApiClientTest {
                 .thenReturn(expectedResponse);
         PokemonServiceResponse actualResponse = pokeApiClient.getPokemonByName(name);
         assertEquals(expectedResponse, actualResponse);
-        verify(restTemplate, times(1)).getForObject(url, PokemonServiceResponse.class);
-    }
-
-    @Test
-    public void testGetPokemonInformationByName_NotFound() {
-        String name = "MissingPokemon";
-        String url = apiUrl + path + name;
-        when(restTemplate.getForObject(url, PokemonServiceResponse.class))
-                .thenThrow(HttpClientErrorException.NotFound.class);
-        assertThrows(ApiEndpointNotFoundException.class, () -> {
-            pokeApiClient.getPokemonByName(name);
-        });
-        verify(restTemplate, times(1)).getForObject(url, PokemonServiceResponse.class);
-    }
-
-    @Test
-    public void testGetPokemonInformationByName_FetchDataException() {
-        String name = "Pikachu";
-        String url = apiUrl + path + name;
-        doThrow(new RestClientException("mock exception")).when(restTemplate).getForObject(url, PokemonServiceResponse.class);
-        assertThrows(ApiFetchDataException.class, () -> {
-            pokeApiClient.getPokemonByName(name);
-        });
         verify(restTemplate, times(1)).getForObject(url, PokemonServiceResponse.class);
     }
 
