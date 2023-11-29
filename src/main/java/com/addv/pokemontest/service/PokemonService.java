@@ -2,8 +2,12 @@ package com.addv.pokemontest.service;
 
 import com.addv.pokemontest.exception.InvalidDataException;
 import com.addv.pokemontest.exception.PokemonNotFoundException;
+import com.addv.pokemontest.model.Move;
 import com.addv.pokemontest.model.Pokemon;
+import com.addv.pokemontest.model.Type;
+import com.addv.pokemontest.repository.MoveRepository;
 import com.addv.pokemontest.repository.PokemonRepository;
+import com.addv.pokemontest.repository.TypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +19,14 @@ import java.util.Optional;
 public class PokemonService {
 
     private final PokemonRepository pokemonRepository;
+    private final MoveRepository moveRepository;
+    private final TypeRepository typeRepository;
 
     @Autowired
-    public PokemonService(PokemonRepository pokemonRepository) {
+    public PokemonService(PokemonRepository pokemonRepository, MoveRepository moveRepository, TypeRepository typeRepository) {
         this.pokemonRepository = pokemonRepository;
+        this.moveRepository = moveRepository;
+        this.typeRepository = typeRepository;
     }
 
     /**
@@ -42,6 +50,16 @@ public class PokemonService {
         if (pokemon == null) {
             throw new InvalidDataException("The pokemon object can't be null.");
         }
+        for (Move iterator: pokemon.getMoves()) {
+            Optional<Move> move = moveRepository.findByName(iterator.getName());
+            move.ifPresent(value -> iterator.setId(value.getId()));
+        }
+
+        for (Type iterator: pokemon.getTypes()) {
+            Optional<Type> type = typeRepository.findByName(iterator.getName());
+            type.ifPresent(value -> iterator.setId(value.getId()));
+        }
+
         return this.pokemonRepository.save(pokemon);
     }
 

@@ -2,20 +2,21 @@ package com.addv.pokemontest.service;
 
 import com.addv.pokemontest.exception.InvalidDataException;
 import com.addv.pokemontest.exception.PokemonNotFoundException;
+import com.addv.pokemontest.model.Move;
 import com.addv.pokemontest.model.Pokemon;
+import com.addv.pokemontest.model.Type;
+import com.addv.pokemontest.repository.MoveRepository;
 import com.addv.pokemontest.repository.PokemonRepository;
+import com.addv.pokemontest.repository.TypeRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestPropertySource;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -24,6 +25,12 @@ class PokemonServiceTest {
 
     @Mock
     private PokemonRepository pokemonRepository;
+
+    @Mock
+    private MoveRepository moveRepository;
+
+    @Mock
+    private TypeRepository typeRepository;
 
     @InjectMocks
     private PokemonService pokemonService;
@@ -41,14 +48,21 @@ class PokemonServiceTest {
     }
 
     @Test
-    void testSaveValidPokemonReturnsSavedPokemon() throws Exception {
+    public void testSave() throws InvalidDataException {
         Pokemon pokemon = new Pokemon();
+        pokemon.setName("Charizard");
+        pokemon.setTypes(Arrays.asList(new Type(1L, 1L, "Fire", "url"), new Type(2L, 2L, "Flying", "url")));
+        pokemon.setMoves(Arrays.asList(new Move(1L, "Flamethrower", "url"), new Move(2L, "Air Slash", "url")));
+
         when(pokemonRepository.save(pokemon)).thenReturn(pokemon);
+        when(moveRepository.findByName(anyString())).thenReturn(Optional.of(new Move(1L, "Flamethrower", "url")));
+        when(typeRepository.findByName(anyString())).thenReturn(Optional.of(new Type(1L, 1L, "Fire", "url")));
 
         Pokemon savedPokemon = pokemonService.save(pokemon);
 
-        assertSame(pokemon, savedPokemon);
-        verify(pokemonRepository, times(1)).save(pokemon);
+        assertEquals(pokemon, savedPokemon);
+        verify(moveRepository, times(2)).findByName(anyString());
+        verify(typeRepository, times(2)).findByName(anyString());
     }
 
     @Test
@@ -122,5 +136,19 @@ class PokemonServiceTest {
             pokemonService.delete(null);
         });
         verify(pokemonRepository, never()).delete(any());
+    }
+
+    @Test
+    public void testFindByType() {
+        String type = "Fire";
+        List<Pokemon> expectedPokemons = Arrays.asList(
+                new Pokemon(1L, "Charizard", Arrays.asList(new Move(1L, "Flamethrower", "url"), new Move(2L, "Air Slash", "url")), Arrays.asList(new Type(1L, 1L, "Fire", "url"), new Type(2L, 2L, "Flying", "url"))),
+                new Pokemon(2L, "Blastoise", Arrays.asList(new Move(3L, "Surf", "url"), new Move(4L, "Hydro Pump", "url")), List.of(new Type(3L, 3L, "Water", "url")))
+        );
+        when(pokemonRepository.findByTypes_Name(type)).thenReturn(expectedPokemons);
+
+        List<Pokemon> actualPokemons = pokemonService.findByType(type);
+
+        assertEquals(expectedPokemons, actualPokemons);
     }
 }
