@@ -6,7 +6,7 @@
 - Java Version: 11
 
 ## Description
-This project is an API that consumes an external API to get information about pokemons. It saves the retrieved information in a database and provides endpoints to create, list, and delete pokemons based on their ID or name.
+This project consumes an external API to get information about pokemons. It saves the retrieved information in a database and provides endpoints to create, list, and delete pokemons based on their ID or name.
 
 ## Features
 - Spring Security for authentication and authorization
